@@ -116,7 +116,7 @@ void loop () {
 
   // make left turn until straight path detected
   else if (error == 102) {
-    
+    // TODO
   }
 }
 
