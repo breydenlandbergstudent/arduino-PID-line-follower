@@ -12,7 +12,7 @@ int sensor[3] = { 0, 0, 0 };
 
 // motor A and B variables
 int motorL[] = { 4, 2, 3 };
-int motorR[] = { 7, 8, 9 };
+int motorR[] = { 7, 8, 6 }; // changed { 7, 8, 9 } to { 7, 8, 6 }
 
 // variables for usage in directional functions
 int motorInput1 = motorL[0];
@@ -94,7 +94,7 @@ void loop () {
   }
 
   // make right turn until straight path detected (only if right path detected - it will go forward in case of straight and right)
-  else if (error = 101) {
+  else if (error == 101) {
     Serial.println ("right");
     analogWrite (ENA, 110);     // set left motor speed
     analogWrite (ENB, 90);      // set right motor speed
@@ -103,20 +103,65 @@ void loop () {
     stopMoving ();
     readSensorValues ();
 
-    if (error = 102) {
+    if (error == 102) {
       do {
         analogWrite (ENA, 110);     // set left motor speed
         analogWrite (ENB, 90);      // set right motor speed
         sharpRightTurn ();
         readSensorValues ();
-    }
-    while (error != 0);
+      } while (error != 0);
     }
   }
 
   // make left turn until straight path detected
   else if (error == 102) {
-    // TODO
+    do {
+      analogWrite (ENA, 110);       // set left motor speed
+      analogWrite (ENB, 90);        // set right motor speed
+      sharpLeftTurn ();
+      readSensorValues ();
+      if (error == 0) {
+        stopMoving ();
+        delay (200);
+      }
+    } while (error != 0);
+  } 
+
+  // make left turn until straight path detected or stop if dead end reached
+  else if (error == 103) {
+    if (flag == 0) {
+      analogWrite (ENA, 110);       // set left motor speed
+      analogWrite (ENB, 90);        // set right motor speed
+      forward ();
+      delay (200);
+      stopMoving ();
+      readSensorValues ();
+
+      // if dead end reached, STOP
+      if (error == 103) {
+        stopMoving ();
+        digitalWrite (ledPin1, HIGH);
+        digitalWrite (ledPin2, HIGH);
+        flag = 1;
+      } 
+      // otherwise, move left
+      else {
+        analogWrite (ENA, 110);     // set left motor speed
+        analogWrite (ENB, 90);      // set right motor speed
+        sharpLeftTurn ();
+        delay (200);
+
+        do {
+          readSensorValues ();
+          analogWrite (ENA, 110);   // set left motor speed
+          analogWrite (ENB, 90);    // set right motor speed
+          sharpLeftTurn ();
+        } while (error != 0);
+      }
+    }
+  } else {
+    calculatePID ();
+    motorControl ();
   }
 }
 
