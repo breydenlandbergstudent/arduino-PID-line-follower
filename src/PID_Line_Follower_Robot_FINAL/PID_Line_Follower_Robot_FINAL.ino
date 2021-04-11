@@ -27,13 +27,13 @@ int ENB = motorR[2]; //6
 
 // initial motor speed
 // may need to change
-int initialMotorSpeed = 140;
+int initialMotorSpeed = 120;
 
 // PID constants
 // may need to change
 // what does each one of these do?
 float Kp = 25;
-float Kd = 15;
+float Kd = 12;
 float error = 0, P = 0, D = 0, PIDval = 0;
 float previousError = 0;
 int flag = 0;
