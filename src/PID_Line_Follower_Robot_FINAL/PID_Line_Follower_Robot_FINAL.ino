@@ -33,10 +33,9 @@ int initialMotorSpeed = 140;
 // may need to change
 // what does each one of these do?
 float Kp = 25;
-float Ki = 0;
 float Kd = 15;
-float error = 0, P = 0, I = 0, D = 0, PIDval = 0;
-float previousError = 0, previousI = 0;
+float error = 0, P = 0, D = 0, PIDval = 0;
+float previousError = 0;
 int flag = 0;
 // end initialisations
 
@@ -64,6 +63,12 @@ void setup () {
 void loop () {
   readSensorValues ();
   Serial.println (error);
+
+  if (error == 103) {
+    stopMoving ();
+  }
+  calculatePID ();
+  motorControl ();
   // make left turn until straight path detected
  /* if (error == 100) {
     Serial.println ("left");
@@ -146,10 +151,7 @@ void loop () {
       }
     }
   } else {*/
-  
-    calculatePID ();
-    motorControl ();
-  }
+}
 
 
 // may need to change
@@ -182,10 +184,8 @@ void readSensorValues () {
 // how does this work?
 void calculatePID () {
   P = error;
-  I = I + previousI;
   D = error - previousError;
-  PIDval = (Kp * P) + (Ki * I) + (Kd * D);
-  previousI = I;
+  PIDval = (Kp * P) + (Kd * D);
   previousError = error;
 }
 // may need to change
