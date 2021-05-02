@@ -3,6 +3,8 @@
 // values below may need to be changed but structure is correct
 // IR sensors
 
+int lastState[3] = { 0, 0, 0 };
+
 int leftSensor = 13; // left-most sensor
 int middleSensor = 11; // middle sensor
 int rightSensor = 12; // right-most sensor
@@ -27,14 +29,14 @@ int ENB = motorR[2]; //6
 
 // initial motor speed
 // may need to change
-int initialMotorSpeed = 120;
+int initialMotorSpeed = 80;
 
 // PID constants
 // may need to change
 // what does each one of these do?
-float Kp = 25;
+float Kp = 10;
 float Ki = 0;
-float Kd = 15;
+float Kd = 40;
 float error = 0, P = 0, I = 0, D = 0, PIDval = 0;
 float previousError = 0, previousI = 0;
 int flag = 0;
@@ -63,15 +65,34 @@ void setup () {
 // may need to change (a lot of it)
 void loop () {
   readSensorValues ();
+
   if (error == 103){
     stopMoving ();
-  } else {
-    Serial.println(" error ");
+  }
+  else if (error == 104) {
+    if (previousError > 0) {
+      error = 6;
+    }
+    else if (previousError < 0) {
+      error = -6;
+    }
+    // error = previousError + (10 * sign(error));
+    // Serial.print(" error : ");
+    // Serial.println (error);
+    //delay(500);
+    calculatePID();
+    motorControl();
+    // Serial.print(" PIDvalue : ");
+    // Serial.println(PIDval);
+    //delay(500);
+  }
+  else {
+    Serial.print(" error : ");
     Serial.println (error);
     //delay(500);
     calculatePID ();
     motorControl ();
-    Serial.println(" PIDvalue ");
+    Serial.print(" PIDvalue : ");
     Serial.println(PIDval);
     //delay(500);
   }
@@ -83,28 +104,34 @@ void readSensorValues () {
   sensor[0] = !digitalRead (leftSensor);
   sensor[1] = !digitalRead (middleSensor);
   sensor[2] = !digitalRead (rightSensor);
+
+  Serial.println(sensor[0]);
+  Serial.println(sensor[1]);
+  Serial.println(sensor[2]);
+
   // may need to change
   // what does each one of these do?
-  if ((sensor[0] == 1) && (sensor[1] == 0) && (sensor[2] == 0))
+  if ((sensor[0] == 1) && (sensor[1] == 0) && (sensor[2] == 0)) {
     error = 3;
-  else if ((sensor[0] == 1) && (sensor[1] == 1) && (sensor[2] == 0))
+  }
+  else if ((sensor[0] == 1) && (sensor[1] == 1) && (sensor[2] == 0)) {
     error = 2;
-  else if ((sensor[0] == 0) && (sensor[1] == 1) && (sensor[2] == 0))
+  }
+  else if ((sensor[0] == 0) && (sensor[1] == 1) && (sensor[2] == 0)) {
     error = 0;
-  else if ((sensor[0] == 0) && (sensor[1] == 1) && (sensor[2] == 1))
+  }
+  else if ((sensor[0] == 0) && (sensor[1] == 1) && (sensor[2] == 1)) {
     error = -2;
-  else if ((sensor[0] == 0) && (sensor[1] == 0) && (sensor[2] == 1))
+  }
+  else if ((sensor[0] == 0) && (sensor[1] == 0) && (sensor[2] == 1)) {
     error = -3;
-  else if ((sensor[0] == 1) && (sensor[1] == 1) && (sensor[2] == 1)) // turn left or stop
+  }
+  else if ((sensor[0] == 1) && (sensor[1] == 1) && (sensor[2] == 1)) { // turn left or stop
     error = 103;
-/*  else if ((sensor[0] == 1) && (sensor[1] == 1) && (sensor[2] == 1)) // turn left
-    error = 100;
-  else if ((sensor[0] == 0) && (sensor[1] == 1) && (sensor[2] == 1)) // turn right
-    error = 101; 
-  else if ((sensor[0] == 0) && (sensor[1] == 0) && (sensor[2] == 0)) // make U turn
-    error = 102;
-  else if ((sensor[0] == 1) && (sensor[1] == 1) && (sensor[2] == 1)) // turn left or stop
-    error = 103;*/
+  }
+  else if ((sensor[0] == 0) && (sensor[1] == 0) && (sensor[2] == 0)) {
+    error = 104;
+  }
 }
 // may need to change
 // how does this work?
