@@ -76,7 +76,6 @@ void loop () {
     else if (previousError < 0) {
       error = -6;
     }
-    // error = previousError + (10 * sign(error));
     // Serial.print(" error : ");
     // Serial.println (error);
     //delay(500);
