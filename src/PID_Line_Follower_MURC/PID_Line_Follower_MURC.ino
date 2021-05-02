@@ -97,12 +97,12 @@ void readSensorValues() {
   sensor[2] = !digitalRead(rightSensor);
 
   //-- OFF - OFF - OFF --
-  if(sensor == LINE_NULL) {
+  if(areArraysEqual(sensor, LINE_NULL, 3)) {
     status = "OFF_LINE";
   }
   
   // -- |ON - ON - ON| --   stop the line follower
-  else if(sensor == LINE_FULL) {
+  else if(areArraysEqual(sensor, LINE_FULL, 3)) {
     status = "FULL_LINE";
   }
   
@@ -110,23 +110,23 @@ void readSensorValues() {
     status = "ON_LINE";
     
     // -- OFF |ON| OFF -- 
-    if(sensor == LINE_MIDDLE) {
+    if(areArraysEqual(sensor, LINE_MIDDLE, 3)) {
       error = 0;
     }
     // -- |ON - ON| OFF --
-    else if(sensor == LINE_LEFT_CLOSE) {
+    else if(areArraysEqual(sensor, LINE_LEFT_CLOSE, 3)) {
       error = 2;
     }
     // -- |ON| OFF - OFF --
-    else if(sensor == LINE_LEFT_FAR) {
+    else if(areArraysEqual(sensor, LINE_LEFT_FAR, 3)) {
       error = 4;
     }
     // -- OFF |ON - ON| --
-    else if(sensor == LINE_RIGHT_CLOSE) {
+    else if(areArraysEqual(sensor, LINE_RIGHT_CLOSE, 3)) {
       error = -2;
     }
     // -- OFF - OFF |ON| --
-    else if(sensor == LINE_RIGHT_FAR) {
+    else if(areArraysEqual(sensor, LINE_RIGHT_FAR, 3)) {
       error = -4;
     }
   }
@@ -198,4 +198,17 @@ void stopMoving() {
   digitalWrite(motorInput2, LOW);
   digitalWrite(motorInput3, LOW);
   digitalWrite(motorInput4, LOW);
+}
+
+// function to compare arrays
+boolean areArraysEqual(int arrayA[], int arrayB[], int numItems) {
+  boolean same = true;
+
+  for(int i = 1; i <= numItems; i++) {
+    if(arrayA[i] != arrayB[i]) {
+      same = false;
+    }
+  }
+
+  return same;
 }
