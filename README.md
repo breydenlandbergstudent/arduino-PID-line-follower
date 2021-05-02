@@ -4,7 +4,7 @@ This repository contains the code for an Arduino PID line follower project, deve
 
 The robot moves forward at a hard-coded speed, and adjusts itself specifically in relation to this speed.
 
-The robot is able to:
+The robot is specifically required to:
 - Follow straight lines;
 - Follow curved lines (limitation?);
 - Follow any lines which contain angles <= 90 degrees.
