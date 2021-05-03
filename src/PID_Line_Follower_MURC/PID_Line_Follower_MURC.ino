@@ -97,12 +97,12 @@ void readSensorValues() {
   sensor[2] = !digitalRead(rightSensor);
 
   //-- OFF - OFF - OFF --
-  if(areArraysEqual(sensor, LINE_NULL, 3)) {
+  if(areArraysEqual(sensor, LINE_NULL)) {
     status = "OFF_LINE";
   }
   
   // -- |ON - ON - ON| --   stop the line follower
-  else if(areArraysEqual(sensor, LINE_FULL, 3)) {
+  else if(areArraysEqual(sensor, LINE_FULL)) {
     status = "FULL_LINE";
   }
   
@@ -204,7 +204,7 @@ void stopMoving() {
 boolean areArraysEqual(int arrayA[], int arrayB[]) {
   boolean same = true;
 
-  for(int i = 1; i <= 3; i++) {
+  for(int i = 1; i <= 3; i++) { // hard coded loop guard - reusability deemed unnecessary
     if(arrayA[i] != arrayB[i]) {
       same = false;
     }
