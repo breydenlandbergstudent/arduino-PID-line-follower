@@ -200,6 +200,7 @@ void stopMoving() {
   digitalWrite(motorInput4, LOW);
 }
 
+
 // function to compare arrays (to use to compare sensor states)
 boolean areArraysEqual(int arrayA[], int arrayB[]) {
   boolean same = true;
